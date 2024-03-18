@@ -1,10 +1,9 @@
-import os
+import numpy as np
 from torch.utils.data import Dataset
-from glob import glob
-from my_stuff.utils import open_json
+from utils import open_json
 
 class ShotDataset(Dataset):
-    def __init__(self, shots_file = "/home/gablinux/futbol_db/shots_data/"):
+    def __init__(self, shots_file = "/home/gablinux/futbol_db/shots_data/shots_db.json"):
         self.db = open_json(shots_file)
 
     def __len__(self):
@@ -18,3 +17,41 @@ class ShotDataset(Dataset):
         keeper = self.db[idx][3]
         goal = self.db[idx][4]
         return pos_actor, teammates, rivals, keeper, goal
+
+
+class ShotLoader():
+    def __init__(self, dataset, batch_size=100, shuffle=True):
+        self.dataset = dataset
+        self.size = len(dataset)
+        self.batch_size = batch_size
+        idxs = np.arange(len(self.dataset))
+        np.random.shuffle(idxs)
+        
+        batches, batch = [], []
+        current_batch_size = 0
+        for ix in idxs:
+            if current_batch_size <= self.batch_size:
+                batch.append(self.dataset[ix])
+                current_batch_size =+ 1
+            else:
+                batches.append(batch)
+                batch, current_batch_size = [], 0
+        if len(batch) > 0:
+            batches.append(batch)
+        self.batches = batches
+
+    def __len__(self):
+        return len(self.batches)
+
+    def __iter__(self):
+        np.random.shuffle(self.batches)
+        for batch in self.batches:
+            yield batch
+
+
+#def test():
+#    training_data = ShotDataset()
+#    train_dataloader = ShotLoader(training_data, batch_size=64, shuffle=True)
+#    for batch in train_dataloader:
+#        break
+#test()
