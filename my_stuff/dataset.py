@@ -28,14 +28,14 @@ class ShotLoader():
         np.random.shuffle(idxs)
         
         batches, batch = [], []
-        current_batch_size = 0
         for ix in idxs:
-            if current_batch_size <= self.batch_size:
-                batch.append(self.dataset[ix])
-                current_batch_size =+ 1
-            else:
+            current_batch_size = len(batch)
+            if current_batch_size == self.batch_size:
                 batches.append(batch)
-                batch, current_batch_size = [], 0
+                batch = []
+            else:
+                batch.append(self.dataset[ix])
+                
         if len(batch) > 0:
             batches.append(batch)
         self.batches = batches
@@ -54,4 +54,5 @@ class ShotLoader():
 #    train_dataloader = ShotLoader(training_data, batch_size=64, shuffle=True)
 #    for batch in train_dataloader:
 #        break
+#    assert len(batch)==64, "size of batch is wrong"
 #test()
