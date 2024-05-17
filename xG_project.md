@@ -112,7 +112,7 @@ There are two main points of future work:
 
 As we showed before, we define the state of the field in time $t$ with a graph $G_t$: 
 
-$G_t = \{V_t, E_t\}$, where $V_t=\{V_j \, \in \, \R^{f_v}\}$ and $E_t=\{E_{jk} \, \in \, \R^{f_e}\}$
+$G_t = \left\{V_t, E_t\right\}$, where $V_t=\left\{V_j  \in  \Re^{f_v}\right\}$ and $E_t=\left\{E_{jk}  \in  \Re^{f_e}\right\}$
 
 With $f_v$ being the size of the vertices features and $f_e$ the size of the edge features.
 	 
