@@ -30,11 +30,11 @@ class ShotLoader():
         batches, batch = [], []
         for ix in idxs:
             current_batch_size = len(batch)
+            batch.append(self.dataset[ix])
             if current_batch_size == self.batch_size:
                 batches.append(batch)
                 batch = []
-            else:
-                batch.append(self.dataset[ix])
+                
                 
         if len(batch) > 0:
             batches.append(batch)

@@ -1,31 +1,34 @@
 # %%
 import matplotlib.pyplot as plt
+import matplotlib.image as mpimg
 import numpy as np
-import glob
-from my_stuff.utils import open_json
 
-# %%
 
-files = sorted(glob.glob("/home/gablinux/futbol_db/shots_data/*.json"))
+def visualize_shot(goalsdf, i):
+    field_img = mpimg.imread("futbol_field.jpg")
+    #left-up corner: 38,24
+    #right-up corner: 510,24
+    #right-down corner: 510,339
+    #left-down corner: 38,339
+    # linear conversion: x = 38 + (510-38)*(x_pos/120)
+    #                    y = 24 - (339-24)*(y_pos/80)
 
-j = 0
+    colors = ['red', 'magenta', 'blue', 'yellow']
 
-shots = open_json(files[j])
-print(files[j])
-
-# %%
-# = shots = [position_actor, [teammates], [rivals], [keeper], goal]
-for shot in shots:
-    #shot = shots[shoti]
-    fig = plt.figure()
-    plt.scatter(shot[0][0], shot[0][1], color="b")
-    for ti in range(len(shot[1])):
-        plt.scatter(shot[1][ti][0], shot[1][ti][1], color="g")
-    for ri in range(len(shot[2])):
-        plt.scatter(shot[2][ri][0], shot[2][ri][1], color="r")
-    for ri in range(len(shot[3])):
-        plt.scatter(shot[3][ri][0], shot[3][ri][1], color="m")
-    plt.title(shot[4])
+    roles = goalsdf["roles"].to_list()
+    positions = goalsdf["positions"].to_list()
+    predxg = goalsdf["predxg"].to_list()
+    gameid = goalsdf["gameid"].to_list()
+    posi = np.array(positions[i])
+    posi[:, 0] = 38 + (510-38)*(posi[:, 0]/120)
+    posi[:, 1] = 24 + (339-24)*(posi[:, 1]/80)
+    roli = roles[i]
+    coli = [colors[roli[j]] for j in range(len(roli))]
+    plt.imshow(field_img)
+    plt.scatter(posi[:, 0], posi[:, 1], color=coli)
+    plt.title("calc_xG=" + str(predxg[i]) + " -- gameid=" + str(gameid[i]))
+    plt.xticks([])
+    plt.yticks([])
     plt.show()
 
 # %%

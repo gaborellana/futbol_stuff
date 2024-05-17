@@ -1,5 +1,7 @@
-import json, glob
-from my_stuff.utils import *
+import glob
+from utils import *
+import pandas as pd
+from data_extraction import ShotDataExtractor
 
 
 event_files_path = "/home/gablinux/futbol_db/events/"
@@ -7,10 +9,11 @@ event_files = sorted(glob.glob(event_files_path + "*.json"))
 
 shots_db_file = "/home/gablinux/futbol_db/shots_data/shots_db.json"
 
-shot_data = []
+extractor = ShotDataExtractor()
 for e in event_files:
-    shot_data = shot_data + extractShotData(e)
+    extractor.extractShotData(e)
+
+df = pd.DataFrame(extractor.get_dict())
     
-with open(shots_db_file, "w") as f:
-    json.dump(shot_data, f)
+df.to_json(shots_db_file, orient='records')
 
